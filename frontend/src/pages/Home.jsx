@@ -8,11 +8,19 @@ const Home = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch('/api/products');
+        const res = await fetch(
+          `${process.env.REACT_APP_API_URL}/api/products`
+        );
+
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+
         const data = await res.json();
-        setProducts(data); // Show all products
+        setProducts(data);
       } catch (error) {
         console.error('Error fetching products:', error);
+        setProducts([]);
       } finally {
         setLoading(false);
       }
@@ -36,10 +44,7 @@ const Home = () => {
         <div className="product-grid">
           {products.length > 0 ? (
             products.map((product) => (
-              <ProductCard
-                key={product._id}
-                product={product}
-              />
+              <ProductCard key={product._id} product={product} />
             ))
           ) : (
             <div>No products found</div>
