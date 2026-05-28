@@ -3,34 +3,127 @@ import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
-    <footer style={{
-      background: '#09090b',
-      borderTop: '1px solid rgba(255, 255, 255, 0.05)',
-      padding: '40px 20px',
-      marginTop: 'auto'
-    }}>
-      <div style={{
-        maxWidth: '1200px',
-        margin: '0 auto',
-        display: 'flex',
-        flexWrap: 'wrap',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        gap: '20px'
-      }}>
+    <footer
+      style={{
+        background: 'rgba(9,9,11,0.95)',
+        backdropFilter: 'blur(12px)',
+        borderTop: '1px solid rgba(255,255,255,0.08)',
+        padding: '45px 25px',
+        marginTop: '60px',
+        boxShadow: '0 -8px 30px rgba(0,0,0,0.35)'
+      }}
+    >
+      <div
+        style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          gap: '30px'
+        }}
+      >
+        {/* BRAND */}
         <div>
-          <h3 style={{ color: '#f97316', marginBottom: '10px' }}>SKJunction</h3>
-          <p style={{ color: '#a1a1aa', fontSize: '0.9rem' }}>Premium E-Commerce Platform.</p>
+          <h2
+            style={{
+              fontSize: '1.8rem',
+              fontWeight: '800',
+              marginBottom: '10px',
+              letterSpacing: '1px',
+              background:
+                'linear-gradient(90deg,#f97316,#fb7185,#8b5cf6)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              textTransform: 'uppercase'
+            }}
+          >
+            Zyntra
+          </h2>
+
+          <p
+            style={{
+              color: '#a1a1aa',
+              fontSize: '0.95rem',
+              lineHeight: '1.7'
+            }}
+          >
+            Premium E-Commerce Platform
+            <br />
+            Shop smarter. Live better.
+          </p>
         </div>
-        
-        <div style={{ display: 'flex', gap: '20px' }}>
-          <Link to="/about" style={{ color: '#a1a1aa', fontSize: '0.9rem' }}>About Us</Link>
-          <Link to="/return" style={{ color: '#a1a1aa', fontSize: '0.9rem' }}>Return Policy</Link>
-          <Link to="/disclaimer" style={{ color: '#a1a1aa', fontSize: '0.9rem' }}>Disclaimer</Link>
+
+        {/* LINKS */}
+        <div
+          style={{
+            display: 'flex',
+            gap: '24px',
+            flexWrap: 'wrap'
+          }}
+        >
+          <Link
+            to="/about"
+            style={{
+              color: '#d4d4d8',
+              textDecoration: 'none',
+              transition: '0.3s',
+              fontWeight: '500'
+            }}
+          >
+            About
+          </Link>
+
+          <Link
+            to="/return"
+            style={{
+              color: '#d4d4d8',
+              textDecoration: 'none',
+              transition: '0.3s',
+              fontWeight: '500'
+            }}
+          >
+            Return Policy
+          </Link>
+
+          <Link
+            to="/disclaimer"
+            style={{
+              color: '#d4d4d8',
+              textDecoration: 'none',
+              transition: '0.3s',
+              fontWeight: '500'
+            }}
+          >
+            Disclaimer
+          </Link>
         </div>
-        
-        <div style={{ color: '#a1a1aa', fontSize: '0.9rem' }}>
-          &copy; {new Date().getFullYear()} SKJunction. All rights reserved.
+
+        {/* COPYRIGHT */}
+        <div
+          style={{
+            color: '#71717a',
+            fontSize: '0.92rem',
+            textAlign: 'right'
+          }}
+        >
+          © {new Date().getFullYear()}
+          <br />
+
+          <span
+            style={{
+              background:
+                'linear-gradient(90deg,#f97316,#fb7185,#8b5cf6)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              fontWeight: '700'
+            }}
+          >
+            Zyntra
+          </span>
+
+          {' '}All Rights Reserved
         </div>
       </div>
     </footer>

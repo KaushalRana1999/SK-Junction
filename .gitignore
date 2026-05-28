@@ -1,8 +1,35 @@
-node_modules
+# Dependencies
+node_modules/
+
+# Environment files
 .env
-uploads
-dist
-build
-coverage
-.vscode
+.env.local
+.env.*
+
+# Build folders
+build/
+dist/
+
+# Uploads / temp files
+uploads/
+
+# Coverage reports
+coverage/
+
+# IDE files
+.vscode/
+
+# OS files
 .DS_Store
+Thumbs.db
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Vercel local config
+.vercel/
+
+# Seed / local scripts
+seed.js

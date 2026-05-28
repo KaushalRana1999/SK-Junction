@@ -4,14 +4,19 @@ const cors = require('cors');
 const connectDB = require('./config/db');
 
 dotenv.config();
-connectDB();
 
 const app = express();
 
-// CORS
+// DB
+connectDB()
+  .then(() => console.log('MongoDB Connected'))
+  .catch((err) => console.log('DB Error:', err));
+
+// Middleware
 app.use(cors({
   origin: [
     'http://localhost:3000',
+    'http://localhost:5173',
     process.env.FRONTEND_URL
   ],
   credentials: true
@@ -26,9 +31,18 @@ app.use('/api/orders', require('./routes/orderRoutes'));
 app.use('/api/payment', require('./routes/paymentRoutes'));
 app.use('/api/analytics', require('./routes/analyticsRoutes'));
 
-// Test route
 app.get('/', (req, res) => {
   res.send('API is running');
 });
 
-module.exports = app;   // IMPORTANT (NO app.listen)
+// LOCAL ONLY
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 5000;
+
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
+// Export for Vercel
+module.exports = app;
