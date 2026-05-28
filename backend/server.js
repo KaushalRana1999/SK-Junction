@@ -7,35 +7,67 @@ dotenv.config();
 
 const app = express();
 
-// DB
+
+// =====================
+// DATABASE CONNECTION
+// =====================
 connectDB()
   .then(() => console.log('MongoDB Connected'))
   .catch((err) => console.log('DB Error:', err));
 
-// Middleware
+
+// =====================
+// CORS FIX (IMPORTANT)
+// =====================
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:5173',
+  'https://zyntrafrontend.vercel.app'
+];
+
 app.use(cors({
-  origin: [
-    'http://localhost:3000',
-    'http://localhost:5173',
-    process.env.FRONTEND_URL
-  ],
+  origin: function (origin, callback) {
+    // allow requests like Postman or server-to-server
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error('CORS blocked for origin: ' + origin));
+  },
   credentials: true
 }));
 
-app.use(express.json());
 
-// Routes
+// =====================
+// MIDDLEWARE
+// =====================
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+
+// =====================
+// ROUTES
+// =====================
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/orders', require('./routes/orderRoutes'));
 app.use('/api/payment', require('./routes/paymentRoutes'));
 app.use('/api/analytics', require('./routes/analyticsRoutes'));
 
+
+// =====================
+// TEST ROUTE
+// =====================
 app.get('/', (req, res) => {
   res.send('API is running');
 });
 
-// LOCAL ONLY
+
+// =====================
+// LOCAL SERVER ONLY
+// =====================
 if (process.env.NODE_ENV !== 'production') {
   const PORT = process.env.PORT || 5000;
 
@@ -44,5 +76,8 @@ if (process.env.NODE_ENV !== 'production') {
   });
 }
 
-// Export for Vercel
+
+// =====================
+// VERCEL EXPORT
+// =====================
 module.exports = app;
