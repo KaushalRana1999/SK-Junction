@@ -14,19 +14,23 @@ const ProductDetail = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await fetch(`/api/products/${id}`);
+        const res = await fetch(
+          `https://zyntra-mocha.vercel.app/api/products/${id}`
+        );
+
         const data = await res.json();
         setProduct(data);
       } catch (error) {
-        console.error(error);
+        console.error('Error fetching product:', error);
       } finally {
         setLoading(false);
       }
     };
+
     fetchProduct();
   }, [id]);
 
-  // ✅ UPDATED: SweetAlert2 popup
+  // Add to Cart with SweetAlert2
   const handleAddToCart = () => {
     if (product) {
       dispatch(
@@ -53,19 +57,33 @@ const ProductDetail = () => {
     }
   };
 
-  if (loading)
+  if (loading) {
     return (
-      <div style={{ textAlign: 'center', margin: '100px', color: '#f97316' }}>
+      <div
+        style={{
+          textAlign: 'center',
+          margin: '100px',
+          color: '#f97316',
+        }}
+      >
         Loading Product...
       </div>
     );
+  }
 
-  if (!product)
+  if (!product) {
     return (
-      <div style={{ textAlign: 'center', margin: '100px', color: '#ef4444' }}>
+      <div
+        style={{
+          textAlign: 'center',
+          margin: '100px',
+          color: '#ef4444',
+        }}
+      >
         Product Not Found
       </div>
     );
+  }
 
   return (
     <div
@@ -107,8 +125,11 @@ const ProductDetail = () => {
           borderRadius: '12px',
         }}
       >
-        {/* Image */}
-        <div className="detail-image-container" style={{ flex: 1 }}>
+        {/* Product Image */}
+        <div
+          className="detail-image-container"
+          style={{ flex: 1 }}
+        >
           <img
             src={product.imageUrl}
             alt={product.name}
@@ -122,9 +143,17 @@ const ProductDetail = () => {
           />
         </div>
 
-        {/* Info */}
-        <div className="detail-info" style={{ flex: 1 }}>
-          <h2 style={{ fontSize: '2.5rem', marginBottom: '10px' }}>
+        {/* Product Info */}
+        <div
+          className="detail-info"
+          style={{ flex: 1 }}
+        >
+          <h2
+            style={{
+              fontSize: '2.5rem',
+              marginBottom: '10px',
+            }}
+          >
             {product.name}
           </h2>
 
@@ -142,13 +171,21 @@ const ProductDetail = () => {
 
           {/* Description */}
           <div style={{ marginBottom: '25px' }}>
-            <h4 style={{ marginBottom: '10px' }}>Product Description</h4>
-            <p style={{ color: '#a1a1aa', lineHeight: '1.8' }}>
+            <h4 style={{ marginBottom: '10px' }}>
+              Product Description
+            </h4>
+
+            <p
+              style={{
+                color: '#a1a1aa',
+                lineHeight: '1.8',
+              }}
+            >
               {product.description}
             </p>
           </div>
 
-          {/* Button */}
+          {/* Add to Cart Button */}
           <button
             onClick={handleAddToCart}
             className="btn"
@@ -170,7 +207,10 @@ const ProductDetail = () => {
           <p
             style={{
               marginTop: '20px',
-              color: product.stock > 0 ? '#10b981' : '#ef4444',
+              color:
+                product.stock > 0
+                  ? '#10b981'
+                  : '#ef4444',
               fontWeight: '600',
             }}
           >
