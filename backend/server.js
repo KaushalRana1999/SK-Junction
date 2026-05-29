@@ -25,19 +25,21 @@ const allowedOrigins = [
   'https://zyntrafrontend.vercel.app'
 ];
 
-app.use(cors({
+const corsOptions = {
   origin: function (origin, callback) {
-    // allow requests like Postman or server-to-server
     if (!origin) return callback(null, true);
-
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-
+    if (allowedOrigins.includes(origin)) return callback(null, true);
     return callback(new Error('CORS blocked for origin: ' + origin));
   },
-  credentials: true
-}));
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+app.use(cors(corsOptions));
+
+// ✅ Handle preflight OPTIONS requests for ALL routes
+app.options('*', cors(corsOptions));
 
 
 // =====================
