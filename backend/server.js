@@ -17,7 +17,7 @@ connectDB()
 
 
 // =====================
-// CORS FIX (IMPORTANT)
+// CORS FIX
 // =====================
 const allowedOrigins = [
   'http://localhost:3000',
@@ -25,21 +25,22 @@ const allowedOrigins = [
   'https://zyntrafrontend.vercel.app'
 ];
 
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) return callback(null, true);
-    return callback(new Error('CORS blocked for origin: ' + origin));
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-};
+// ✅ Manual CORS middleware — handles preflight without app.options('*')
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
 
-app.use(cors(corsOptions));
-
-// ✅ Handle preflight OPTIONS requests for ALL routes
-app.options('*', cors(corsOptions));
+  // Handle preflight request
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
 
 
 // =====================
@@ -82,4 +83,4 @@ if (process.env.NODE_ENV !== 'production') {
 // =====================
 // VERCEL EXPORT
 // =====================
-module.exports = app;
+module.exports = app;s
