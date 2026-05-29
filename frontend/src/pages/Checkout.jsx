@@ -24,8 +24,9 @@ const Checkout = () => {
     0
   );
 
+  // ✅ Updated with backend URL
   const bypassPayment = async () => {
-    const saveOrderRes = await fetch('/api/orders', {
+    const saveOrderRes = await fetch('https://zyntra-mocha.vercel.app/api/orders', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -60,15 +61,13 @@ const Checkout = () => {
 
   const handlePayment = async () => {
     try {
-      const orderRes = await fetch('/api/payment/order', {
+      const orderRes = await fetch('https://zyntra-mocha.vercel.app/api/payment/order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount: totalPrice })
       });
 
-      const orderData = await orderRes.json();
-
-      // ❌ Razorpay not configured fallback
+      // ✅ Check before parsing JSON
       if (!orderRes.ok) {
         const result = await Swal.fire({
           title: 'Payment Gateway Not Configured',
@@ -88,6 +87,8 @@ const Checkout = () => {
         }
       }
 
+      const orderData = await orderRes.json();
+
       const options = {
         key: 'rzp_test_dummykey123',
         amount: orderData.amount,
@@ -97,14 +98,14 @@ const Checkout = () => {
         order_id: orderData.id,
 
         handler: async function (response) {
-          const verifyRes = await fetch('/api/payment/verify', {
+          const verifyRes = await fetch('https://zyntra-mocha.vercel.app/api/payment/verify', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(response)
           });
 
           if (verifyRes.ok) {
-            const saveOrderRes = await fetch('/api/orders', {
+            const saveOrderRes = await fetch('https://zyntra-mocha.vercel.app/api/orders', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
