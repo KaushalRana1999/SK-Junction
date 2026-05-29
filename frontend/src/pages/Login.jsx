@@ -11,7 +11,6 @@ import { AuthContext } from '../context/AuthContext';
 import '../styles/auth.css';
 
 const Login = () => {
-
   const [email, setEmail] =
     useState('');
 
@@ -29,7 +28,7 @@ const Login = () => {
     try {
 
       const res = await fetch(
-        '/api/auth/login',
+        'https://zyntra-mocha.vercel.app/api/auth/login',
         {
           method: 'POST',
           headers: {
@@ -43,8 +42,7 @@ const Login = () => {
         }
       );
 
-      const data =
-        await res.json();
+      const data = await res.json();
 
       if (res.ok) {
 
@@ -53,12 +51,9 @@ const Login = () => {
         await Swal.fire({
           icon: 'success',
           title: 'Login Successful',
-          text:
-            `Welcome back, ${data.name} 👋`,
-          confirmButtonColor:
-            '#f97316',
-          background:
-            '#18181b',
+          text: `Welcome back, ${data.name} 👋`,
+          confirmButtonColor: '#f97316',
+          background: '#18181b',
           color: '#fff'
         });
 
@@ -72,10 +67,8 @@ const Login = () => {
           text:
             data.message ||
             'Invalid credentials',
-          confirmButtonColor:
-            '#ef4444',
-          background:
-            '#18181b',
+          confirmButtonColor: '#ef4444',
+          background: '#18181b',
           color: '#fff'
         });
 
@@ -83,17 +76,18 @@ const Login = () => {
 
     } catch (error) {
 
-      console.error(error);
+      console.error(
+        'Login Error:',
+        error
+      );
 
       Swal.fire({
         icon: 'error',
         title: 'Server Error',
         text:
           'Something went wrong. Please try again.',
-        confirmButtonColor:
-          '#ef4444',
-        background:
-          '#18181b',
+        confirmButtonColor: '#ef4444',
+        background: '#18181b',
         color: '#fff'
       });
 
@@ -101,56 +95,55 @@ const Login = () => {
   };
 
   return (
-  <div className="auth-container">
-    <form
-      onSubmit={handleSubmit}
-      className="auth-form"
-    >
-      <h2>Login</h2>
-
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) =>
-          setEmail(e.target.value)
-        }
-        required
-      />
-
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) =>
-          setPassword(e.target.value)
-        }
-        required
-      />
-
-      <button
-        type="submit"
-        className="btn"
+    <div className="auth-container">
+      <form
+        onSubmit={handleSubmit}
+        className="auth-form"
       >
-        Login
-      </button>
+        <h2>Login</h2>
 
-      {/* 🔥 NEW FORGOT PASSWORD LINK */}
-      <p style={{ marginTop: '10px' }}>
-        <Link to="/forgot-password">
-          Forgot Password?
-        </Link>
-      </p>
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) =>
+            setEmail(e.target.value)
+          }
+          required
+        />
 
-      <p>
-        Don't have an account?
-        <Link to="/register">
-          {' '}Register
-        </Link>
-      </p>
-    </form>
-  </div>
-);
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) =>
+            setPassword(e.target.value)
+          }
+          required
+        />
+
+        <button
+          type="submit"
+          className="btn"
+        >
+          Login
+        </button>
+
+        <p style={{ marginTop: '10px' }}>
+          <Link to="/forgot-password">
+            Forgot Password?
+          </Link>
+        </p>
+
+        <p>
+          Don't have an account?
+          <Link to="/register">
+            {' '}Register
+          </Link>
+        </p>
+      </form>
+    </div>
+  );
 };
 
 export default Login;
