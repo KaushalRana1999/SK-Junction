@@ -17,29 +17,53 @@ const AdminProducts = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-
         const res =
           await fetch(
-            '/api/products'
+            'https://zyntra-mocha.vercel.app/api/products'
           );
 
-        const data =
-          await res.json();
+        const text =
+          await res.text();
 
-        setProducts(
-          Array.isArray(data)
-            ? data
-            : []
-        );
+        let data = [];
 
+        try {
+          data =
+            JSON.parse(text);
+        } catch {
+          throw new Error(
+            'Products API returned HTML instead of JSON'
+          );
+        }
+
+        if (res.ok) {
+          setProducts(
+            Array.isArray(data)
+              ? data
+              : []
+          );
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text:
+              data.message ||
+              'Failed to load products.',
+            confirmButtonColor:
+              '#ef4444',
+            background:
+              '#18181b',
+            color: '#fff'
+          });
+        }
       } catch (error) {
-
         console.error(error);
 
         Swal.fire({
           icon: 'error',
           title: 'Error',
           text:
+            error.message ||
             'Failed to load products.',
           confirmButtonColor:
             '#ef4444',
@@ -53,8 +77,9 @@ const AdminProducts = () => {
     fetchProducts();
   }, []);
 
-  const handleDelete = async (id) => {
-
+  const handleDelete = async (
+    id
+  ) => {
     const result =
       await Swal.fire({
         title:
@@ -75,12 +100,10 @@ const AdminProducts = () => {
       });
 
     if (result.isConfirmed) {
-
       try {
-
         const res =
           await fetch(
-            `/api/products/${id}`,
+            `https://zyntra-mocha.vercel.app/api/products/${id}`,
             {
               method:
                 'DELETE',
@@ -91,11 +114,21 @@ const AdminProducts = () => {
             }
           );
 
-        const data =
-          await res.json();
+        const text =
+          await res.text();
+
+        let data = {};
+
+        try {
+          data =
+            JSON.parse(text);
+        } catch {
+          throw new Error(
+            'Delete API returned HTML instead of JSON'
+          );
+        }
 
         if (res.ok) {
-
           setProducts(
             products.filter(
               (p) =>
@@ -114,13 +147,9 @@ const AdminProducts = () => {
             background:
               '#18181b',
             color: '#fff',
-            timer: 2200,
-            showConfirmButton:
-              true
+            timer: 2200
           });
-
         } else {
-
           Swal.fire({
             icon: 'error',
             title:
@@ -134,11 +163,8 @@ const AdminProducts = () => {
               '#18181b',
             color: '#fff'
           });
-
         }
-
       } catch (error) {
-
         console.error(error);
 
         Swal.fire({
@@ -146,12 +172,13 @@ const AdminProducts = () => {
           title:
             'Server Error',
           text:
+            error.message ||
             'Something went wrong.',
           confirmButtonColor:
             '#ef4444',
           background:
             '#18181b',
-          color: '#fff'
+            color: '#fff'
         });
       }
     }
@@ -204,53 +231,12 @@ const AdminProducts = () => {
                 rowStyle
               }
             >
-              <th
-                style={
-                  thStyle
-                }
-              >
-                ID
-              </th>
-
-              <th
-                style={
-                  thStyle
-                }
-              >
-                NAME
-              </th>
-
-              <th
-                style={
-                  thStyle
-                }
-              >
-                PRICE
-              </th>
-
-              <th
-                style={
-                  thStyle
-                }
-              >
-                CATEGORY
-              </th>
-
-              <th
-                style={
-                  thStyle
-                }
-              >
-                STOCK
-              </th>
-
-              <th
-                style={
-                  thStyle
-                }
-              >
-                ACTIONS
-              </th>
+              <th style={thStyle}>ID</th>
+              <th style={thStyle}>NAME</th>
+              <th style={thStyle}>PRICE</th>
+              <th style={thStyle}>CATEGORY</th>
+              <th style={thStyle}>STOCK</th>
+              <th style={thStyle}>ACTIONS</th>
             </tr>
           </thead>
 
@@ -267,11 +253,7 @@ const AdminProducts = () => {
                     rowStyle
                   }
                 >
-                  <td
-                    style={
-                      tdStyle
-                    }
-                  >
+                  <td style={tdStyle}>
                     {product._id.substring(
                       0,
                       8
@@ -279,52 +261,26 @@ const AdminProducts = () => {
                     ...
                   </td>
 
-                  <td
-                    style={
-                      tdStyle
-                    }
-                  >
-                    {
-                      product.name
-                    }
+                  <td style={tdStyle}>
+                    {product.name}
                   </td>
 
-                  <td
-                    style={
-                      tdStyle
-                    }
-                  >
+                  <td style={tdStyle}>
                     ₹
-                    {product.price.toFixed(
+                    {product.price?.toFixed(
                       2
                     )}
                   </td>
 
-                  <td
-                    style={
-                      tdStyle
-                    }
-                  >
-                    {
-                      product.category
-                    }
+                  <td style={tdStyle}>
+                    {product.category}
                   </td>
 
-                  <td
-                    style={
-                      tdStyle
-                    }
-                  >
-                    {
-                      product.stock
-                    }
+                  <td style={tdStyle}>
+                    {product.stock}
                   </td>
 
-                  <td
-                    style={
-                      tdStyle
-                    }
-                  >
+                  <td style={tdStyle}>
                     <Link
                       to={`/admin/edit-product/${product._id}`}
                       style={

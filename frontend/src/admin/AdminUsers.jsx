@@ -1,5 +1,10 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, {
+  useEffect,
+  useState,
+  useContext
+} from 'react';
 import { AuthContext } from '../context/AuthContext';
+import Swal from 'sweetalert2';
 
 const AdminUsers = () => {
   const { user } = useContext(AuthContext);
@@ -7,18 +12,83 @@ const AdminUsers = () => {
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const res = await fetch('/api/auth/users', {
-        headers: { Authorization: `Bearer ${user.token}` }
-      });
-      const data = await res.json();
-      setUsers(Array.isArray(data) ? data : []);
+      try {
+        const res = await fetch(
+          'https://zyntra-mocha.vercel.app/api/auth/users',
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${user.token}`
+            }
+          }
+        );
+
+        const text = await res.text();
+
+        let data = [];
+
+        try {
+          data = JSON.parse(text);
+        } catch {
+          throw new Error(
+            'Users API returned HTML instead of JSON'
+          );
+        }
+
+        if (res.ok) {
+          setUsers(
+            Array.isArray(data)
+              ? data
+              : []
+          );
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text:
+              data.message ||
+              'Failed to load users.',
+            confirmButtonColor:
+              '#ef4444',
+            background:
+              '#18181b',
+            color: '#fff'
+          });
+        }
+      } catch (error) {
+        console.error(error);
+
+        Swal.fire({
+          icon: 'error',
+          title: 'Server Error',
+          text:
+            error.message ||
+            'Could not load users.',
+          confirmButtonColor:
+            '#ef4444',
+          background:
+            '#18181b',
+          color: '#fff'
+        });
+      }
     };
-    fetchUsers();
+
+    if (user?.token) {
+      fetchUsers();
+    }
   }, [user]);
 
   return (
     <div style={containerStyle}>
-      <h2 style={{ color: '#f97316', marginBottom: '20px' }}>User Directory</h2>
+      <h2
+        style={{
+          color: '#f97316',
+          marginBottom: '20px'
+        }}
+      >
+        User Directory
+      </h2>
+
       <div style={{ overflowX: 'auto' }}>
         <table style={tableStyle}>
           <thead>
@@ -30,18 +100,61 @@ const AdminUsers = () => {
               <th style={thStyle}>JOINED</th>
             </tr>
           </thead>
+
           <tbody>
-            {users.map(u => (
-              <tr key={u._id} style={rowStyle}>
-                <td style={tdStyle}>{u._id.substring(0, 8)}...</td>
-                <td style={tdStyle}>{u.name}</td>
-                <td style={tdStyle}>{u.email}</td>
+            {users.map((u) => (
+              <tr
+                key={u._id}
+                style={rowStyle}
+              >
                 <td style={tdStyle}>
-                  <span style={{ background: u.role === 'admin' ? 'rgba(234,88,12,0.2)' : 'rgba(16,185,129,0.2)', color: u.role === 'admin' ? '#f97316' : '#10b981', padding: '4px 8px', borderRadius: '4px', fontSize: '0.85rem', fontWeight: 'bold' }}>
+                  {u._id.substring(
+                    0,
+                    8
+                  )}
+                  ...
+                </td>
+
+                <td style={tdStyle}>
+                  {u.name}
+                </td>
+
+                <td style={tdStyle}>
+                  {u.email}
+                </td>
+
+                <td style={tdStyle}>
+                  <span
+                    style={{
+                      background:
+                        u.role ===
+                        'admin'
+                          ? 'rgba(234,88,12,0.2)'
+                          : 'rgba(16,185,129,0.2)',
+                      color:
+                        u.role ===
+                        'admin'
+                          ? '#f97316'
+                          : '#10b981',
+                      padding:
+                        '4px 8px',
+                      borderRadius:
+                        '4px',
+                      fontSize:
+                        '0.85rem',
+                      fontWeight:
+                        'bold'
+                    }}
+                  >
                     {u.role.toUpperCase()}
                   </span>
                 </td>
-                <td style={tdStyle}>{new Date(u.createdAt).toLocaleDateString()}</td>
+
+                <td style={tdStyle}>
+                  {new Date(
+                    u.createdAt
+                  ).toLocaleDateString()}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -51,10 +164,37 @@ const AdminUsers = () => {
   );
 };
 
-const containerStyle = { maxWidth: '1200px', margin: '40px auto', padding: '30px', background: '#18181b', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)', color: '#fafafa' };
-const tableStyle = { width: '100%', borderCollapse: 'collapse' };
-const rowStyle = { borderBottom: '1px solid rgba(255,255,255,0.1)' };
-const thStyle = { padding: '15px', textAlign: 'left', color: '#a1a1aa', fontSize: '0.9rem' };
-const tdStyle = { padding: '15px', textAlign: 'left' };
+const containerStyle = {
+  maxWidth: '1200px',
+  margin: '40px auto',
+  padding: '30px',
+  background: '#18181b',
+  borderRadius: '12px',
+  border:
+    '1px solid rgba(255,255,255,0.05)',
+  color: '#fafafa'
+};
+
+const tableStyle = {
+  width: '100%',
+  borderCollapse: 'collapse'
+};
+
+const rowStyle = {
+  borderBottom:
+    '1px solid rgba(255,255,255,0.1)'
+};
+
+const thStyle = {
+  padding: '15px',
+  textAlign: 'left',
+  color: '#a1a1aa',
+  fontSize: '0.9rem'
+};
+
+const tdStyle = {
+  padding: '15px',
+  textAlign: 'left'
+};
 
 export default AdminUsers;
