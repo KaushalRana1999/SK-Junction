@@ -15,47 +15,46 @@ const Profile = () => {
       return;
     }
 
-    fetchMyOrders();
-  }, [user]);
+    const fetchMyOrders = async () => {
+      try {
+        console.log('TOKEN:', user?.token);
 
-  const fetchMyOrders = async () => {
-    try {
-      console.log('TOKEN:', user?.token);
+        const res = await fetch(
+          'https://zyntra-mocha.vercel.app/api/orders/myorders',
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${user.token}`,
+            },
+          }
+        );
 
-      const res = await fetch(
-        'https://zyntra-mocha.vercel.app/api/orders/myorders',
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${user.token}`,
-          },
+        console.log('STATUS:', res.status);
+
+        const data = await res.json();
+
+        console.log('ORDERS:', data);
+
+        if (res.ok) {
+          setOrders(Array.isArray(data) ? data : []);
+        } else {
+          if (res.status === 401) {
+            logout();
+            navigate('/login');
+          }
+          setOrders([]);
         }
-      );
-
-      console.log('STATUS:', res.status);
-
-      const data = await res.json();
-
-      console.log('ORDERS:', data);
-
-      if (res.ok) {
-        setOrders(Array.isArray(data) ? data : []);
-      } else {
-        if (res.status === 401) {
-          logout();
-          navigate('/login');
-        }
-
+      } catch (error) {
+        console.log('FETCH ERROR:', error);
         setOrders([]);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.log('FETCH ERROR:', error);
-      setOrders([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+    fetchMyOrders();
+  }, [user, navigate, logout]);
 
   const handleLogout = () => {
     logout();
@@ -69,7 +68,7 @@ const Profile = () => {
     background: '#18181b',
     borderRadius: '12px',
     border: '1px solid rgba(255,255,255,0.05)',
-    color: '#fafafa',
+    color: '#fafafa'
   };
 
   const badgeStyle = {
@@ -79,7 +78,7 @@ const Profile = () => {
     borderRadius: '8px',
     fontSize: '0.9rem',
     fontWeight: 'bold',
-    display: 'inline-block',
+    display: 'inline-block'
   };
 
   if (!user) return null;
@@ -93,7 +92,7 @@ const Profile = () => {
           alignItems: 'flex-start',
           borderBottom: '1px solid rgba(255,255,255,0.1)',
           paddingBottom: '30px',
-          marginBottom: '30px',
+          marginBottom: '30px'
         }}
       >
         <div>
@@ -101,19 +100,13 @@ const Profile = () => {
             style={{
               color: '#fff',
               fontSize: '2.2rem',
-              marginBottom: '10px',
+              marginBottom: '10px'
             }}
           >
             My Profile
           </h2>
 
-          <p
-            style={{
-              color: '#a1a1aa',
-              fontSize: '1.2rem',
-              marginBottom: '5px',
-            }}
-          >
+          <p style={{ color: '#a1a1aa', fontSize: '1.2rem' }}>
             <strong>Name:</strong> {user.name}
           </p>
 
@@ -121,7 +114,7 @@ const Profile = () => {
             style={{
               color: '#a1a1aa',
               fontSize: '1.2rem',
-              marginBottom: '15px',
+              marginBottom: '15px'
             }}
           >
             <strong>Email:</strong> {user.email}
@@ -137,7 +130,7 @@ const Profile = () => {
           className="btn"
           style={{
             background: '#ef4444',
-            boxShadow: 'none',
+            boxShadow: 'none'
           }}
         >
           Logout
@@ -148,7 +141,7 @@ const Profile = () => {
         style={{
           color: '#f97316',
           marginBottom: '20px',
-          fontSize: '1.5rem',
+          fontSize: '1.5rem'
         }}
       >
         Order History
@@ -165,13 +158,13 @@ const Profile = () => {
             padding: '30px',
             borderRadius: '8px',
             textAlign: 'center',
-            border: '1px solid #27272a',
+            border: '1px solid #27272a'
           }}
         >
           <p
             style={{
               color: '#a1a1aa',
-              marginBottom: '15px',
+              marginBottom: '15px'
             }}
           >
             You haven't placed any orders yet.
@@ -182,12 +175,7 @@ const Profile = () => {
           </Link>
         </div>
       ) : (
-        <div
-          style={{
-            display: 'grid',
-            gap: '20px',
-          }}
-        >
+        <div style={{ display: 'grid', gap: '20px' }}>
           {orders.map((order) => (
             <div
               key={order._id}
@@ -200,44 +188,25 @@ const Profile = () => {
                 flexWrap: 'wrap',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                gap: '20px',
+                gap: '20px'
               }}
             >
               <div>
-                <p
-                  style={{
-                    color: '#a1a1aa',
-                    fontSize: '0.9rem',
-                    marginBottom: '5px',
-                  }}
-                >
+                <p style={{ color: '#a1a1aa', fontSize: '0.9rem' }}>
                   Order ID:{' '}
                   <span style={{ color: '#fff' }}>
                     {order._id}
                   </span>
                 </p>
 
-                <p
-                  style={{
-                    color: '#a1a1aa',
-                    fontSize: '0.9rem',
-                    marginBottom: '5px',
-                  }}
-                >
+                <p style={{ color: '#a1a1aa', fontSize: '0.9rem' }}>
                   Placed On:{' '}
                   <span style={{ color: '#fff' }}>
-                    {new Date(
-                      order.createdAt
-                    ).toLocaleDateString()}
+                    {new Date(order.createdAt).toLocaleDateString()}
                   </span>
                 </p>
 
-                <p
-                  style={{
-                    color: '#a1a1aa',
-                    fontSize: '0.9rem',
-                  }}
-                >
+                <p style={{ color: '#a1a1aa', fontSize: '0.9rem' }}>
                   Total:{' '}
                   <strong style={{ color: '#10b981' }}>
                     ₹{order.totalAmount?.toFixed(2)}
@@ -264,7 +233,7 @@ const Profile = () => {
 
                     padding: '8px 16px',
                     borderRadius: '20px',
-                    fontWeight: 'bold',
+                    fontWeight: 'bold'
                   }}
                 >
                   {order.status}
